@@ -2,9 +2,11 @@
 // USING FUNCTIONS WE DEFINE IN STORE
 // const router = require("express").Router();
 // const store = require("../DB/store.js");
+
 const fs = require("fs");
 const dbJSON = require("../DB/db.json");
 const { v4: uuidv4 } = require('uuid');
+const path = require("path");
 // Get Route to read and display from JSON db
 
 module.exports = (app) => {
@@ -62,13 +64,13 @@ app.delete("/api/notes/:id", function (req, res) {
         newNoteData = JSON.stringify(getNoteData);
 
         // Write data back to stored db.json
-        fs.writeFile("./db/db.json", newNoteData, (err) => {
+        fs.writeFile("./DB/db.json", newNoteData, (err) => {
             if (err) throw err;
         });
+
+        console.log("note deleted");
 
         res.send("The note was successfully deleted.");
     });
 });
 };
-
-// router.get api/notes... use store function
