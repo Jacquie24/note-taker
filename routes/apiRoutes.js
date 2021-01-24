@@ -3,85 +3,70 @@
 // const router = require("express").Router();
 // const store = require("../DB/store.js");
 const fs = require("fs");
-var noteData = require("../DB/db.json");
+const dbJSON = require("../DB/db.json");
+const { v4: uuidv4 } = require('uuid');
 // Get Route to read and display from JSON db
 
 module.exports = (app) => {
 
 app.get("/api/notes", function (req, res) {
-    res.sendFile(path.join(__dirname, "/db/db.json"));
+    res.sendFile(path.join(__dirname, "../DB/db.json"));
 });
 
 // Post Route to save new note to JSON db
 app.post("/api/notes", function (req, res) {
-    // Declare empty array for current and new notes
-    let savedNotes = [];
 
     // Read currently stored notes list
-    fs.readFile("./db/db.json", "utf8", (err, data) => {
+    fs.readFile("./DB/db.json", "utf8", (err, data) => {
         if (err) throw err;
 
         // Parse currently stored notes
-        const currentNoteData = JSON.parse(data);
+        let noteData = JSON.parse(data);
+        // Note to save on the request body
+        let noteBody = req.body;
+        // Give the note a unique id
+        noteBody.id = uuidv4();
+        // Add to note data
+        noteData.push(noteBody);
+        // Return to a string
+        let noteString = JSON.stringify(noteData);
 
-        for (let i = 0; i < currentNoteData.length; i++) {
-            // Create new note object for each current note
-            const note = {
-                title: currentNoteData[i].title,
-                text: currentNoteData[i].text,
-                id: i,
-            };
 
-            // Add note object to array
-            savedNotes.push(note);
-        }
-
-        // Create new note object for new note
-        const newNote = {
-            title: req.body.title,
-            text: req.body.text,
-            id: savedNotes.length,
-        };
-
-        // Push new note into array
-        savedNotes.push(newNote);
-
-        // Stringify savedNotes array
-        savedNotes = JSON.stringify(savedNotes);
-
-        fs.writeFile("./db/db.json", savedNotes, (err) => {
+        // Write to db file
+        fs.writeFile("./DB/db.json", noteString, (err) => {
             if (err) throw err;
-            console.log("File saved successfully.");
+            console.log("Note saved.");
         });
 
-        // Send a response to resolve the post request
-        res.send("Note added successfully.");
+        res.send("The note was successfully added.");
     });
 });
 
 
 // Delete Route to delete stored notes
 app.delete("/api/notes/:id", function (req, res) {
-    // Capture clicked Note ID
+
+    // Retrieving unique id
     const noteID = req.params.id;
-    fs.readFile("./db/db.json", "utf8", (err, data) => {
+
+    fs.readFile("./DB/db.json", "utf8", (err, data) => {
         if (err) throw err;
 
-        // Parse currently stored notes
-        const currentNoteData = JSON.parse(data);
+        // Parse note data
+        const getNoteData = JSON.parse(data);
 
         // Delete clicked note
-        currentNoteData.splice(noteID, 1);
+        getNoteData.splice(noteID, 1);
 
         // Stringify data
-        updatedData = JSON.stringify(currentNoteData);
+        newNoteData = JSON.stringify(getNoteData);
 
         // Write data back to stored db.json
-        fs.writeFile("./db/db.json", updatedData, (err) => {
+        fs.writeFile("./db/db.json", newNoteData, (err) => {
             if (err) throw err;
         });
 
-        res.send("Note deleted succesfully.");
+        res.send("The note was successfully deleted.");
     });
 });
 };
