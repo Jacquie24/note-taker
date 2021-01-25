@@ -55,13 +55,14 @@ app.delete("/api/notes/:id", function (req, res) {
         if (err) throw err;
 
         // Parse note data
-        const getNoteData = JSON.parse(data);
+        const parseData = JSON.parse(data);
 
         // Delete clicked note
-        getNoteData.splice(noteID, 1);
+        
+        const delNoteData = parseData.filter((note) => note.id !== noteID); 
 
         // Stringify data
-        newNoteData = JSON.stringify(getNoteData);
+        newNoteData = JSON.stringify(delNoteData);
 
         // Write data back to stored db.json
         fs.writeFile("./DB/db.json", newNoteData, (err) => {
