@@ -1,6 +1,5 @@
 // /API ROUTES AND DATA FROM DB FILE
-// USING FUNCTIONS WE DEFINE IN STORE
-// const router = require("express").Router();
+ss").Router();
 // const store = require("../DB/store.js");
 
 const fs = require("fs");
@@ -37,7 +36,6 @@ app.post("/api/notes", function (req, res) {
         // Write to db file
         fs.writeFile("./DB/db.json", noteString, (err) => {
             if (err) throw err;
-            console.log("Note saved.");
         });
 
         res.send("The note was successfully added.");
@@ -68,8 +66,6 @@ app.delete("/api/notes/:id", function (req, res) {
         fs.writeFile("./DB/db.json", newNoteData, (err) => {
             if (err) throw err;
         });
-
-        console.log("note deleted");
 
         res.send("The note was successfully deleted.");
     });

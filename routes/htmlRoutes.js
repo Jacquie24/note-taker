@@ -12,9 +12,4 @@ module.exports = function (app) {
         res.sendFile(path.join(__dirname, "../public/index.html"));
     });
 
-    // If the user types in any URL other than /tables or /reserve, send them to the home page
-    // app.use("/", (req, res) => {
-    //     res.sendFile(path.join(__dirname + "../public/home.html"));
-    // });
-
 }
